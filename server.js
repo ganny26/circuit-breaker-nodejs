@@ -48,7 +48,7 @@ const fallback = new Fallback({
 })
 
 // Creates a circuit
-const sisCircuit = new Circuit({
+const orderCircuit = new Circuit({
   name: 'Order Operations',
   options: {
     prometheus: {
@@ -85,7 +85,7 @@ const orderController = {
 app.get('/stats', (req, res) => res.send(MollitiaPrometheus.metrics()))
 
 app.get('/orders', (req, res) => {
-  sisCircuit
+  orderCircuit
     .fn(() => orderController.getOrders(req.query.category))
     .execute()
     .then((result) => {
