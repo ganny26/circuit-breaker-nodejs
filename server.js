@@ -10,8 +10,8 @@ const { Circuit, Fallback, SlidingCountBreaker, BreakerState } = Mollitia
 app.use(express.json({ urlencoded: true }))
 Mollitia.use(new MollitiaPrometheus.PrometheusAddon())
 
-const config1 = {
-  name: 'sisCounter',
+const config = {
+  name: 'appCounter',
   slidingWindowSize: 6, // Failure Rate Calculation is done on the last 6 iterations
   minimumNumberOfCalls: 3, // 3 iterations are needed to start calculating the failure rate, and see if circuit should be opened or not
   failureRateThreshold: 60, // If half of the iterations or more are failing, the circuit is switched to Opened state.
@@ -22,21 +22,8 @@ const config1 = {
   halfOpenStateMaxDelay: 30000,
 }
 
-const config2 = {
-  name: 'appCounter',
-  slidingWindowSize: 6, // Failure Rate Calculation is done on the last 6 iterations
-  minimumNumberOfCalls: 3, // 3 iterations are needed to start calculating the failure rate, and see if circuit should be opened or not
-  failureRateThreshold: 50, // If half of the iterations or more are failing, the circuit is switched to Opened state.
-  slowCallDurationThreshold: 500, // An iteration is considered as being slow if the iteration lasts more than 1s
-  slowCallRateThreshold: 80, // If at least 80% of the iterations are considered as being slow, the circuit is switched to Opened state.
-  permittedNumberOfCallsInHalfOpenState: 2, // When the circuit is in Half Opened state, the circuit accepts 2 iterations in this state.
-  // Once these 2 iterations are received, failure rate is calculated on these iterations.
-  // If failure rate is lower than failureRateThreshold, the circuit is switched to Closed state.
-  // If the failure rate is higher or equal to failureRateThreshold, the circuit is switched to Opened state.
-  openStateDelay: 10000, // The circuit stays in Opened state for 10s
-}
 
-const slidingCountBreaker = new SlidingCountBreaker(config2)
+const slidingCountBreaker = new SlidingCountBreaker(config)
 
 const fallback = new Fallback({
   callback(err) {
